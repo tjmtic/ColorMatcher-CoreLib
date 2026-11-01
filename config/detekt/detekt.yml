@@ -1,0 +1,14 @@
+# Layered on detekt's default config (buildUponDefaultConfig). Zero issues; never add a
+# baseline to get past a finding (kmp-agentic-sdlc .claude/docs/kotlin-style.md rule 3).
+build:
+  maxIssues: 0
+
+naming:
+  FunctionNaming:
+    # Composables are PascalCase by convention.
+    ignoreAnnotated: ['Composable']
+
+# :detekt-rules — the fleet's project rules.
+fleet:
+  ForbiddenNotNullAssertion:
+    active: true

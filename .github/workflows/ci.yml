@@ -1,0 +1,53 @@
+name: CI
+
+# Order is the fleet's: format first (cheapest, and nobody should have to read a log for it),
+# then project rules + lint, tests, the Android build, and the iOS compile check.
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  checks:
+    name: Checks (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: temurin }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Format (ktfmt)
+        run: ./gradlew ktfmtCheck --console=plain
+      - name: Project rules + detekt
+        run: ./gradlew :detekt-rules:test detekt --console=plain
+      - name: Shared tests (JVM)
+        run: ./gradlew :shared:jvmTest --console=plain
+      - name: App tests (Android unit)
+        run: ./gradlew :composeApp:testDebugUnitTest --console=plain
+      - name: Android build
+        run: ./gradlew :composeApp:assembleDebug --console=plain
+      - name: iOS compile check (klib cross-compilation)
+        run: ./gradlew :composeApp:compileKotlinIosSimulatorArm64 -Pkotlin.native.enableKlibsCrossCompilation=true --console=plain
+
+  ios:
+    name: iOS (macOS)
+    # macOS minutes cost 10x on private repos: pushes to main/develop and PRs into main only.
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: temurin }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Shared tests (iOS simulator)
+        run: ./gradlew :shared:iosSimulatorArm64Test --console=plain
+      - name: Archive (unsigned)
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/iosApp.xcarchive" \
+            archive CODE_SIGNING_ALLOWED=NO

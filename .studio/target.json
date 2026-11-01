@@ -1,0 +1,26 @@
+{
+  "id": "kmp-app-template",
+  "kind": "kmp",
+  "project": { "repo": "tjmtic/kmp-app-template" },
+  "releaseBranch": "main",
+  "mergeBranch": "develop",
+  "autoMerge": false,
+  "appModule": "composeApp",
+  "sections": [
+    {
+      "id": "shared",
+      "label": "Shared logic",
+      "moduleDir": "shared/src",
+      "gradleTest": ":shared:jvmTest",
+      "areas": ["logic", "model", "domain", "data"]
+    },
+    {
+      "id": "app",
+      "label": "App UI",
+      "moduleDir": "composeApp/src",
+      "gradleTest": ":composeApp:testDebugUnitTest",
+      "areas": ["ui", "screen", "compose", "navigation"]
+    }
+  ],
+  "verify": ["./gradlew", "ktfmtCheck", ":detekt-rules:test", "detekt", ":shared:jvmTest", ":composeApp:testDebugUnitTest", ":composeApp:assembleDebug", ":composeApp:compileKotlinIosSimulatorArm64", "-Pkotlin.native.enableKlibsCrossCompilation=true"]
+}

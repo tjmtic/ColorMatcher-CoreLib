@@ -1,0 +1,48 @@
+[versions]
+# The only place versions live. Toolchain upgrades are deliberate, never drive-by.
+# AGP in lockstep with the fleet: a composite build tolerates exactly one AGP version.
+agp = "8.13.2"
+kotlin = "2.4.10"
+composeMultiplatform = "1.11.1"
+android-compileSdk = "36"
+android-minSdk = "26"
+android-targetSdk = "36"
+androidx-activity = "1.12.0"
+androidx-lifecycle = "2.10.0"
+kotlinx-coroutines = "1.10.2"
+junit = "4.13.2"
+# Fleet style standard (kmp-agentic-sdlc .claude/docs/kotlin-style.md).
+ktfmt = "0.27.0"
+detekt = "1.23.8"
+compose-rules = "0.6.6"
+
+[libraries]
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+junit = { module = "junit:junit", version.ref = "junit" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+# :detekt-rules — tooling only, never on a product classpath.
+detekt-api = { module = "io.gitlab.arturbosch.detekt:detekt-api", version.ref = "detekt" }
+detekt-test = { module = "io.gitlab.arturbosch.detekt:detekt-test", version.ref = "detekt" }
+compose-rules-detekt = { module = "io.nlopez.compose.rules:detekt", version.ref = "compose-rules" }
+# ViewPoint support libraries (enable the matching entry in settings.gradle.kts).
+viewpoint-camera = { module = "com.abyxcz.camera:camera-lib", version = "1.0.4" }
+viewpoint-ui = { module = "com.abyxcz.viewpoint.ui.library:ui-lib", version = "1.0.3" }
+viewpoint-permissions = { module = "com.abyxcz.viewpoint.permissions:permissions-lib", version = "1.0.2" }
+viewpoint-location = { module = "com.abyxcz.viewpoint.location:location-lib", version = "1.0.0" }
+viewpoint-storage = { module = "com.abyxcz.viewpoint.storage:storage-lib", version = "1.0.5" }
+viewpoint-haptic = { module = "com.abyxcz.viewpoint.haptic:haptic-lib", version = "1.0.0" }
+viewpoint-sensor = { module = "com.viewpoint:sensor", version = "0.1.0" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

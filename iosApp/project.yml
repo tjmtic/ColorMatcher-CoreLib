@@ -1,0 +1,40 @@
+# XcodeGen spec (github.com/yonaskolb/XcodeGen). iosApp.xcodeproj is generated from it and
+# committed, so building needs only Xcode; after editing this file run `xcodegen generate` here.
+name: iosApp
+options:
+  bundleIdPrefix: com.abyxcz
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: "" # set your team, or pass DEVELOPMENT_TEAM=… to xcodebuild
+    CODE_SIGN_STYLE: Automatic
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: KMP Template
+        UILaunchScreen: {}
+        CADisableMinimumFrameDurationOnPhone: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.abyxcz.template
+        PRODUCT_NAME: iosApp
+        FRAMEWORK_SEARCH_PATHS:
+          - "$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+          - "$(inherited)"
+        OTHER_LDFLAGS: ["-framework", "ComposeApp"]
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # No Intel simulator: Compose Multiplatform 1.11 publishes no iosX64 variant.
+        EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+    preBuildScripts:
+      - name: Compose framework
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :composeApp:embedAndSignAppleFrameworkForXcode

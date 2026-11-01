@@ -1,0 +1,17 @@
+.gradle/
+build/
+local.properties
+.idea/
+.kotlin/
+.DS_Store
+*.iml
+.cxx/
+xcuserdata/
+*.xcuserstate
+iosApp/build/
+.claude/agent-events.env
+
+# Release signing secrets (see keystore.properties.template): never committed.
+*.jks
+*.keystore
+keystore.properties
