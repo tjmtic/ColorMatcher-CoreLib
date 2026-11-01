@@ -3,6 +3,13 @@
 build:
   maxIssues: 0
 
+style:
+  MagicNumber:
+    # Color science is published constants (sRGB matrices, CIE Lab, CIEDE2000): naming each one adds
+    # nothing but noise. Outside color/ the rule stands; tests are excluded by default.
+    excludes: ['**/commonTest/**', '**/jvmTest/**', '**/iosTest/**', '**/core/color/**']
+    ignoreEnums: true
+
 naming:
   FunctionNaming:
     # Composables are PascalCase by convention.

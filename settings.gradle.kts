@@ -12,7 +12,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "kmp-app-template"
+rootProject.name = "ColorMatcher-CoreLib"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -67,4 +67,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp", ":shared", ":detekt-rules")
+include(":core-lib", ":detekt-rules")

@@ -1,9 +1,20 @@
-# kmp-app-template — project conventions
+# ColorMatcher-CoreLib — project conventions
 
-A new app created from this template: rename it first (`scripts/rename.sh`, see README).
+The domain core of ColorMatcher: pure Kotlin Multiplatform in `:core-lib`, published for the private
+app repo (tjmtic/ColorMatcher) to consume. Public repo: nothing secret, no keys, no private prompts.
 Style is a tool, not a review subject: ktfmt (kotlinlang) + detekt at zero issues — run
 `bash .claude/scripts/format-changed.sh` before you are done, never add a detekt baseline.
 
+## Core rules
+- No UI (no Compose), no platform types, no I/O. The platform is reached only through interfaces in
+  `ports/`; the app implements them. Dependencies point inward.
+- Matching is done in CIELAB with CIEDE2000, never by distance in RGB. Color math cites its source
+  (CIE publication, IEC 61966-2-1, Sharma et al. 2005) in the KDoc and is tested against published
+  values, not against itself.
+- No Pantone (or any other licensed) color data in this repo or the app: not codes-to-hex tables,
+  not "approximate" lists. A licensed palette is something the user imports on their own device
+  (`PaletteKind.LICENSED`). Clay brand colors and hex schemes are fine.
+- A match always reports its ΔE and closeness; nothing here claims a match is exact unless ΔE says so.
 
 ## Stack
 - Kotlin Multiplatform, Compose Multiplatform + Material 3, shared UI on both targets.

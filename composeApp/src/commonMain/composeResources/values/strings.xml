@@ -1,4 +1,0 @@
-<resources>
-    <string name="app_name">KMP Template</string>
-    <string name="greeting">Hello from %1$s</string>
-</resources>
