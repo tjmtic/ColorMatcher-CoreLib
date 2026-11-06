@@ -8,8 +8,13 @@ import com.abyxcz.colormatcher.core.color.srgbToLinear
 import com.abyxcz.colormatcher.core.color.toLab
 import com.abyxcz.colormatcher.core.sample.PixelBuffer
 
-/** One distinct color in a photo: its average (in linear light) and its share of the pixels. */
-data class ColorPart(val color: Srgb, val share: Double)
+/**
+ * One distinct color in a photo: its average (in linear light), its share of the pixels, and its
+ * [spread], measured as a patch's is ([com.abyxcz.colormatcher.core.sample.PatchSample]): the ΔE00
+ * from the average within which 90% of the part's samples fall. A part is what clustering grouped,
+ * not one flat color: a shaded or marbled clay gives a part with a large spread.
+ */
+data class ColorPart(val color: Srgb, val share: Double, val spread: Double)
 
 /**
  * The distinct colors of a photo, biggest share first — the parts a user can pick: each clay of a
@@ -66,7 +71,9 @@ fun findColorParts(
             .sortedByDescending { it.first.size }
     return ColorParts(
         parts =
-            parts.map { (members, color) -> ColorPart(color, members.size.toDouble() / labs.size) },
+            parts.map { (members, color) ->
+                ColorPart(color, members.size.toDouble() / labs.size, spread(color, members, labs))
+            },
         centers = parts.map { it.second.toLab() },
     )
 }
@@ -124,6 +131,13 @@ private fun merge(groups: Map<Int, List<Int>>, labs: List<Lab>, below: Double): 
     return kept
 }
 
+/** The ΔE00 from [color] within which [SPREAD_QUANTILE] of the [members] fall. */
+private fun spread(color: Srgb, members: List<Int>, labs: List<Lab>): Double {
+    val center = color.toLab()
+    val distances = members.map { deltaE2000(center, labs[it]) }.sorted()
+    return distances[((distances.size - 1) * SPREAD_QUANTILE).toInt()]
+}
+
 private fun nearest(lab: Lab, centers: List<Lab>): Int =
     centers.indices.minBy { distance(lab, centers[it]) }
 
@@ -151,5 +165,6 @@ private fun averageColor(colors: List<Srgb>): Srgb =
         linearToSrgb(colors.sumOf { srgbToLinear(it.b) } / colors.size),
     )
 
+private const val SPREAD_QUANTILE = 0.9
 private const val ALPHA_SHIFT = 24
 private const val OPAQUE = 0xFF
