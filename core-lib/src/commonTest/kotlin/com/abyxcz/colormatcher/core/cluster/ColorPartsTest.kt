@@ -7,6 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class ColorPartsTest {
     private val red = Srgb(190, 60, 50)
@@ -50,6 +51,21 @@ class ColorPartsTest {
         val parts = assertNotNull(findColorParts(mostlyCream, options = PartOptions(step = 1)))
         assertEquals(listOf(cream, red), parts.parts.map { it.color })
         assertEquals(0.75, parts.parts[0].share, 1e-9)
+    }
+
+    @Test
+    fun aFlatPartHasNoSpread() {
+        val parts = assertNotNull(findColorParts(stripes, options = PartOptions(step = 1)))
+        parts.parts.forEach { assertEquals(0.0, it.spread, 1e-9) }
+    }
+
+    @Test
+    fun aPartGroupingDifferentColorsHasALargeSpread() {
+        // One part allowed: red and teal are grouped, and the part says it is not one color.
+        val half = photo(20, 10) { x, _ -> if (x < 10) red else teal }
+        val parts =
+            assertNotNull(findColorParts(half, options = PartOptions(maxParts = 1, step = 1)))
+        assertTrue(parts.parts.single().spread > 20.0, "spread ${parts.parts.single().spread}")
     }
 
     @Test
