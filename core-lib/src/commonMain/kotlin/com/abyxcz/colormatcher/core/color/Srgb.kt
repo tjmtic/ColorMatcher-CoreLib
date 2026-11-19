@@ -15,6 +15,13 @@ data class Srgb(val r: Int, val g: Int, val b: Int) {
     companion object {
         private const val MAX = 255
 
+        /**
+         * The color of a packed ARGB pixel (alpha in the top byte, then red, green, blue); alpha is
+         * ignored.
+         */
+        fun fromArgb(argb: Int): Srgb =
+            Srgb((argb shr 16) and MAX, (argb shr 8) and MAX, argb and MAX)
+
         /** Parses `#RRGGBB`, `RRGGBB`, `#RGB` or `RGB`; null for anything else. */
         fun fromHex(hex: String): Srgb? {
             val digits = hex.trim().removePrefix("#")
